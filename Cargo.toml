@@ -1,0 +1,8 @@
+[package]
+name = "spyer"
+version = "0.1.0"
+authors = ["zethra <jediben97@gmail.com>"]
+
+[dependencies]
+reqwest = "0.5.1"
+regex = "0.2.1"
