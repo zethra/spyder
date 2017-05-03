@@ -19,7 +19,8 @@ fn main() {
     let mut visited: HashSet<String> = HashSet::new();
     let mut images = HashSet::new();
 
-    to_visit.push_back("https://zethratech.com/".to_owned());
+    to_visit.push_back("https://bengoldberg.info/".to_owned());
+    let allowed_origins = vec!["bengoldberg.info"];
 
     while to_visit.len() > 0 {
         let addr = match to_visit.pop_front() {
@@ -30,7 +31,7 @@ fn main() {
         // println!("\tList: {:?}", visited);
         // println!("\tContains: {}", visited.contains(&addr));
         // println!("\tQueue: {:?}", to_visit);
-        visited.insert(addr.clone());
+        // visited.insert(addr.clone());
         let parts = match purl.captures(&addr) {
             Some(p) => p,
             None => continue,
@@ -63,16 +64,25 @@ fn main() {
                 nadd.push_str(&origin);
                 nadd.push_str(parts.get(3).unwrap().as_str());
             } else if parts.get(2).is_none() {
+                if !allowed_origins.contains(&parts.get(3).unwrap().as_str()) {
+                    continue;
+                }
                 nadd.push_str(parts.get(1).unwrap().as_str());
                 nadd.push_str(parts.get(3).unwrap().as_str());
             } else {
+                if !allowed_origins.contains(&parts.get(2).unwrap().as_str()) {
+                    continue;
+                }
                 nadd.push_str(parts.get(1).unwrap().as_str());
                 nadd.push_str(parts.get(2).unwrap().as_str());
                 nadd.push_str(parts.get(3).unwrap().as_str());
             }
             if !visited.contains(&nadd) {
-                // println!("\tSkipping: {}", nadd);
+                // println!("\tAdding: {}", nadd);
+                visited.insert(nadd.clone());
                 to_visit.push_back(nadd);
+            } else {
+                // println!("\tSkipping: {}", nadd);
             }
         }
         for cap in img.captures_iter(&conent) {
